@@ -13,8 +13,8 @@ int main(int argc, char* argv[]) {
     int c_exist = strcmp(argv[1], c_arg);
     int num_cols, obuf_len, curr_idx, num_rows = 0;
     char *curr_str, *long_str = "";
-    char **buf, **readbuffer = NULL;
-    size_t read_line, *temp_n;
+    char **buf, **readbuffer;
+    size_t read_line, temp_n;
     // 0  means the last character is NOT a delimiter, 1 means it IS a delimiter
     int is_del = 0;
 
@@ -39,8 +39,8 @@ int main(int argc, char* argv[]) {
 
     // set a temp index for obuf and put indices in
     int temp = 0;
-    for(int i = argc - obuf_len + 1; i <= argc; i++) {
-        if(atoi(argv[temp]) >= 0) {
+    for(int i = argc - obuf_len; i < argc; i++) {
+        if( (atoi(argv[i])) >= 0) {
             obuf[temp] = atoi(argv[i]);
         }
 
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while((read_line = getline(readbuffer, temp_n, stdin)) >= 0) {
+    while((read_line = getline(readbuffer, &temp_n, stdin)) >= 0) {
         // set the curren index to 0
         curr_idx = 0;
 
