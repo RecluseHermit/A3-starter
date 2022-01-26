@@ -37,16 +37,20 @@ int main(int argc, char* argv[]) {
     // indices array and the size_t variable
     int obuf[obuf_len];
 
-    // put indices in
+    // set a temp index for obuf and put indices in
+    int temp = 0;
     for(int i = argc - obuf_len + 1; i <= argc; i++) {
-        if(atoi(argv[i]) >= 0) {
-            obuf[i] = atoi(argv[i]);
+        if(atoi(argv[temp]) >= 0) {
+            obuf[temp] = atoi(argv[i]);
         }
 
         // change negative values to positive values
         else {
-            obuf[i] = atoi(argv[i]) +  num_cols;
+            obuf[temp] = atoi(argv[i]) +  num_cols;
         }
+
+        // next index
+        temp++;
     }
 
 	/* process the input as described in the writeup */
