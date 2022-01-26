@@ -22,13 +22,13 @@ int main(int argc, char* argv[]) {
     // no "-c" argument
     if(c_exist != 0) {
         num_cols = atoi(argv[1]);
-        obuf_len = argc - 1;
+        obuf_len = argc - 2;
     }
 
     // have "-c" argument
     else {
         num_cols = atoi(argv[2]);
-        obuf_len = argc - 2;
+        obuf_len = argc - 3;
     }
 
     // initialize the buf
