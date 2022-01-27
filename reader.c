@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     buf = malloc(sizeof(char*) * num_cols);
 
     // indices array and the size_t variable
-    int obuf[obuf_len];
+    int *obuf = malloc(sizeof(int) * num_cols);
 
     // set a temp index for obuf and put indices in
     int temp = 0;
@@ -120,8 +120,10 @@ int main(int argc, char* argv[]) {
         readbuffer = &null_str;
     }
 
-    // free buf
+    // free malloc
     free(buf);
+    free(readbuffer);
+    free(obuf);
 
 	/* Format string for output to be printed when -c option is given */
     if(c_exist == 0) {
