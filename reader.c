@@ -42,7 +42,14 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while((read_line = getline(readbuffer, &size_arg, stdin)) != EOF) {
+    while(1) {
+        // end of the loop
+        if((read_line = getline(readbuffer, &size_arg, stdin)) < 0) {
+            free(readbuffer);
+            readbuffer = NULL;
+            break;
+        }
+
         // initialize variables
         curr_idx = 0;
 
@@ -75,9 +82,8 @@ int main(int argc, char* argv[]) {
             printf("%s ", buf[obuf[i]]);
         printf("\n");
 
-        // variables change and free memories
+        // variables change
         num_rows++;
-        free(readbuffer);
         readbuffer = &null_str;
 
     }
