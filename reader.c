@@ -8,128 +8,85 @@
 
 int main(int argc, char* argv[]) {
 	/* Local Variables */
-    char c_arg[] = "-c";
-    int c_exist = strcmp(argv[1], c_arg);
-    int num_rows = 0;
-    int num_cols, obuf_len, curr_idx, *obuf;
-    long str_len;
-    char *curr_str, **buf;
-    size_t read_line, temp_n;
+    long str_len = 0; // maximum field
+    size_t read_line, size_arg; // for getlines
+    char *curr_str, *null_str = NULL, **buf, **readbuffer = &null_str; // char pointers
+    int *obuf, obuf_len, curr_idx, is_del, num_cols; // int values
+    int num_rows = 0, c_exist = strcmp(argv[1], "-c"); // int pointers
 
-    // set of readbuffer
-    char *null_str = NULL;
-    char **readbuffer = &null_str;
-
-    // 0  means the last character is NOT a delimiter, 1 means it IS a delimiter
-    int is_del = 0;
-
-	/* save the other cli args */
     // no "-c" argument
     if(c_exist != 0) {
         num_cols = atoi(argv[1]);
         obuf_len = argc - 2;
     }
 
-    // have "-c" argument
+    // yes "-c" argument
     else {
         num_cols = atoi(argv[2]);
         obuf_len = argc - 3;
     }
 
-    // initialize the buf
+    // malloc memories
     buf = malloc(sizeof(char*) * num_cols);
-
-    // indices array and the size_t variable
     obuf = malloc(sizeof(int) * obuf_len);
 
     // set a temp index for obuf and put indices in
-    int temp = 0;
-    for(int i = argc - obuf_len; i < argc; i++) {
-        if( (atoi(argv[i])) >= 0) {
-            obuf[temp] = atoi(argv[i]);
-        }
+    for(int i = 0; i < obuf_len; i++) {
+        // positive argument
+        if((atoi(argv[argc - obuf_len + i])) >= 0)
+            obuf[i] = atoi(argv[argc - obuf_len + i]);
 
-        // change negative values to positive values
-        else {
-            obuf[temp] = atoi(argv[i]) +  num_cols;
-        }
-
-        // next index
-        temp++;
+        // negative argument to positive
+        else
+            obuf[i] = atoi(argv[argc - obuf_len + i]) +  num_cols;
     }
 
 	/* process the input as described in the writeup */
-    while((read_line = getline(readbuffer, &temp_n, stdin)) != EOF) {
-        // set the curren index to 0
+    while((read_line = getline(readbuffer, &size_arg, stdin)) != EOF) {
+        // initialize variables
         curr_idx = 0;
 
-        // set the longest to the first field
-        if(num_rows == 0) {
-            str_len = 0;
-        }
-
         // loop through readbuffer
-        for(int i = 0; ; i++) {
-            // first index situation
-            if(i == 0) {
+        for(int i = 0; (*readbuffer)[i] != '\0'; i++) {
+            // first character or first character after delimiter
+            if(((*readbuffer)[i] != ' ' && (*readbuffer)[i] != '\t' &&
+                    (*readbuffer)[i] != '\n' && is_del == 1) || i == 0) {
                 // change variables
                 curr_str = &((*readbuffer)[i]);
-                buf[curr_idx] = curr_str;
+                buf[curr_idx++] = curr_str;
                 is_del = 0;
-                curr_idx++;
             }
 
-            // not first index situation
-            else if((*readbuffer)[i] != ' ' && (*readbuffer)[i] != '\t' &&
-                    (*readbuffer)[i] != '\n' && is_del == 1) {
-                // change variables
-                curr_str = &((*readbuffer)[i]);
-                buf[curr_idx] = curr_str;
-                is_del = 0;
-                curr_idx++;
-            }
-
-            // delimiter situation
+            // first delimiter after character
             else if(((*readbuffer)[i] == ' ' || (*readbuffer)[i] == '\t' ||
                     (*readbuffer)[i] == '\n') && is_del == 0) {
                 // change variables
                 (*readbuffer)[i] = '\0';
                 is_del = 1;
 
-                // compare current string with the longest string, then set value
-                if(strlen(curr_str) > str_len) {
+                // compare current with the longest string and set variables
+                if(strlen(curr_str) > str_len)
                     str_len = strlen(curr_str);
-                }
-            }
-
-            // break the loop
-            else if((*readbuffer)[i] == '\0') {
-                break;
             }
         }
 
-        // print the first n-1 columns current record
-        for(int i = 0; i < obuf_len - 1; i++){
+        // print the columns for current record
+        for(int i = 0; i < obuf_len; i++)
             printf("%s ", buf[obuf[i]]);
-        }
+        printf("\n");
 
-        // print the last column
-        printf("%s\n", buf[obuf[obuf_len-1]]);
-
-        // end variable changes
+        // variables change and free memories
         num_rows++;
+        free(readbuffer);
         readbuffer = &null_str;
+
     }
 
-    // free malloc
-    free(readbuffer);
+    // free memories
     free(buf);
     free(obuf);
 
 	/* Format string for output to be printed when -c option is given */
-    if(c_exist == 0) {
-        printf("Number of lines: %d\n"
-               "Longest field: %ld characters\n",
-               num_rows, str_len);
-    }
+    if(c_exist == 0)
+        printf("Number of lines: %d\nLongest field: %ld characters\n", num_rows, str_len);
 }
