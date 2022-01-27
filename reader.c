@@ -4,7 +4,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 
 int main(int argc, char* argv[]) {
@@ -12,10 +11,14 @@ int main(int argc, char* argv[]) {
     char c_arg[] = "-c";
     int c_exist = strcmp(argv[1], c_arg);
     int num_cols, obuf_len, curr_idx, num_rows = 0;
-    char *curr_str, *long_str = "";
-    char **buf, **readbuffer;
-    *readbuffer = NULL;
+    long str_len;
+    char *curr_str, **buf;
     size_t read_line, temp_n;
+
+    // set of readbuffer
+    char *null_str = NULL;
+    char **readbuffer = &null_str;
+
     // 0  means the last character is NOT a delimiter, 1 means it IS a delimiter
     int is_del = 0;
 
@@ -55,17 +58,17 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while((read_line = getline(readbuffer, &temp_n, stdin)) >= 0) {
+    while((read_line = getline(readbuffer, &temp_n, stdin)) != EOF) {
         // set the curren index to 0
         curr_idx = 0;
 
         // set the longest to the first field
         if(num_rows == 0) {
-            long_str = &((*readbuffer)[0]);
+            str_len = 0;
         }
 
         // loop through readbuffer
-        for(int i = 0; i < (int)read_line; i++) {
+        for(int i = 0; ; i++) {
             // first index situation
             if(i == 0) {
                 // change variables
@@ -93,14 +96,19 @@ int main(int argc, char* argv[]) {
                 is_del = 1;
 
                 // compare current string with the longest string, then set value
-                if(strcmp(long_str, curr_str) < 0) {
-                    long_str = curr_str;
+                if(strlen(curr_str) > str_len) {
+                    str_len = strlen(curr_str);
                 }
+            }
+
+            // break the loop
+            else if((*readbuffer)[i] == '\0') {
+                break;
             }
         }
 
         // print the first n-1 columns current record
-        for(int i = 0; i < obuf_len - 2; i++){
+        for(int i = 0; i < obuf_len - 1; i++){
             printf("%s ", buf[obuf[i]]);
         }
 
@@ -109,12 +117,16 @@ int main(int argc, char* argv[]) {
 
         // end variable changes
         num_rows++;
-        readbuffer = NULL;
+        readbuffer = &null_str;
     }
 
-	/* Format string for output to be printed when -c option is given */
+    // free buf
+    free(buf);
 
-    printf("Number of lines: %d\n "
-           "Longest field: %d characters\n",
-           num_rows, (int)strlen(long_str));
+	/* Format string for output to be printed when -c option is given */
+    if(c_exist == 0) {
+        printf("Number of lines: %d\n"
+               "Longest field: %ld characters\n",
+               num_rows, str_len);
+    }
 }
