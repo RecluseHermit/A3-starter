@@ -10,7 +10,8 @@ int main(int argc, char* argv[]) {
 	/* Local Variables */
     char c_arg[] = "-c";
     int c_exist = strcmp(argv[1], c_arg);
-    int num_cols, obuf_len, curr_idx, num_rows = 0;
+    int num_rows = 0;
+    int num_cols, obuf_len, curr_idx, *obuf;
     long str_len;
     char *curr_str, **buf;
     size_t read_line, temp_n;
@@ -39,7 +40,7 @@ int main(int argc, char* argv[]) {
     buf = malloc(sizeof(char*) * num_cols);
 
     // indices array and the size_t variable
-    int *obuf = malloc(sizeof(int) * num_cols);
+    obuf = malloc(sizeof(int) * obuf_len);
 
     // set a temp index for obuf and put indices in
     int temp = 0;
@@ -121,8 +122,8 @@ int main(int argc, char* argv[]) {
     }
 
     // free malloc
-    free(buf);
     free(readbuffer);
+    free(buf);
     free(obuf);
 
 	/* Format string for output to be printed when -c option is given */
