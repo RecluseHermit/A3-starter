@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	/* process the input as described in the writeup */
     while(1) {
         // end of the loop
-        if((read_line = getline(readbuffer, &size_arg, stdin)) < 0) {
+        if((read_line = getline(readbuffer, &size_arg, stdin)) == EOF) {
             free(readbuffer);
             readbuffer = NULL;
             break;
