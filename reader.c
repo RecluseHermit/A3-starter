@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
     int num_cols, obuf_len, curr_idx, num_rows = 0;
     char *curr_str, *long_str = "";
     char **buf, **readbuffer;
+    *readbuffer = NULL;
     size_t read_line, temp_n;
     // 0  means the last character is NOT a delimiter, 1 means it IS a delimiter
     int is_del = 0;
@@ -60,7 +61,7 @@ int main(int argc, char* argv[]) {
 
         // set the longest to the first field
         if(num_rows == 0) {
-            long_str = readbuffer[0];
+            long_str = &((*readbuffer)[0]);
         }
 
         // loop through readbuffer
@@ -68,27 +69,27 @@ int main(int argc, char* argv[]) {
             // first index situation
             if(i == 0) {
                 // change variables
-                curr_str = readbuffer[i];
+                curr_str = &((*readbuffer)[i]);
                 buf[curr_idx] = curr_str;
                 is_del = 0;
                 curr_idx++;
             }
 
             // not first index situation
-            else if(*readbuffer[i] != ' ' && *readbuffer[i] != '\t' &&
-                    *readbuffer[i] != '\n' && is_del == 1) {
+            else if((*readbuffer)[i] != ' ' && (*readbuffer)[i] != '\t' &&
+                    (*readbuffer)[i] != '\n' && is_del == 1) {
                 // change variables
-                curr_str = readbuffer[i];
+                curr_str = &((*readbuffer)[i]);
                 buf[curr_idx] = curr_str;
                 is_del = 0;
                 curr_idx++;
             }
 
             // delimiter situation
-            else if((*readbuffer[i] == ' ' || *readbuffer[i] == '\t' ||
-                    *readbuffer[i] == '\n') && is_del == 0) {
+            else if(((*readbuffer)[i] == ' ' || (*readbuffer)[i] == '\t' ||
+                    (*readbuffer)[i] == '\n') && is_del == 0) {
                 // change variables
-                *readbuffer[i] = '\0';
+                (*readbuffer)[i] = '\0';
                 is_del = 1;
 
                 // compare current string with the longest string, then set value
@@ -99,12 +100,12 @@ int main(int argc, char* argv[]) {
         }
 
         // print the first n-1 columns current record
-        for(int i = 0; i < num_cols - 1; i++){
-            printf("%s ", buf[i]);
+        for(int i = 0; i < obuf_len - 2; i++){
+            printf("%s ", buf[obuf[i]]);
         }
 
         // print the last column
-        printf("%s\n", buf[num_cols-1]);
+        printf("%s\n", buf[obuf[obuf_len-1]]);
 
         // end variable changes
         num_rows++;
