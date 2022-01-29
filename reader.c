@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	/* Local Variables */
     unsigned long str_len = 0; // maximum field
     size_t read_line, size_arg; // for getlines
-    char *curr_str, *null_str = NULL, **buf, **readbuffer = &null_str; // char pointers
+    char *curr_str, **buf, *readbuffer = NULL; // char pointers
     int *obuf, obuf_len, curr_idx, is_del, num_cols; // int values
     int num_rows = 0, c_exist = strcmp(argv[1], "-c"); // int pointers
 
@@ -42,26 +42,26 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while((int)(read_line = getline(readbuffer, &size_arg, stdin)) != EOF) {
+    while((int)(read_line = getline(&readbuffer, &size_arg, stdin)) != EOF) {
         // initialize variables
         curr_idx = 0;
 
         // loop through readbuffer
-        for(int i = 0; (*readbuffer)[i] != '\0'; i++) {
+        for(int i = 0; readbuffer[i] != '\0'; i++) {
             // first character or first character after delimiter
-            if(((*readbuffer)[i] != ' ' && (*readbuffer)[i] != '\t' &&
-                    (*readbuffer)[i] != '\n' && is_del == 1) || i == 0) {
+            if((readbuffer[i] != ' ' && readbuffer[i] != '\t' &&
+                    readbuffer[i] != '\n' && is_del == 1) || i == 0) {
                 // change variables
-                curr_str = &((*readbuffer)[i]);
+                curr_str = &(readbuffer[i]);
                 buf[curr_idx++] = curr_str;
                 is_del = 0;
             }
 
             // first delimiter after character
-            else if(((*readbuffer)[i] == ' ' || (*readbuffer)[i] == '\t' ||
-                    (*readbuffer)[i] == '\n') && is_del == 0) {
+            else if((readbuffer[i] == ' ' || readbuffer[i] == '\t' ||
+                    readbuffer[i] == '\n') && is_del == 0) {
                 // change variables
-                (*readbuffer)[i] = '\0';
+                readbuffer[i] = '\0';
                 is_del = 1;
 
                 // compare current with the longest string and set variables
@@ -77,10 +77,14 @@ int main(int argc, char* argv[]) {
 
         // variables change
         num_rows++;
-        readbuffer = &null_str;
+        readbuffer = NULL;
     }
 
     // free memories
+    if(readbuffer != NULL) {
+        free(readbuffer);
+        readbuffer = NULL;
+    }
     free(buf);
     free(obuf);
 
