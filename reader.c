@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     unsigned long str_len = 0; // maximum field
     size_t size_arg = 0; // for getlines
     char *curr_str, **buf, *readbuffer = NULL; // char pointers
-    int *obuf, obuf_len, curr_idx, is_del, num_cols; // int values
+    int *obuf, obuf_len, curr_idx, is_del = 0, num_cols; // int values
     int num_rows = 0, c_exist = strcmp(argv[1], "-c"); // int pointers
 
     // no "-c" argument
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while(getline(&readbuffer, &size_arg, stdin) < 0) {
+    while(getline(&readbuffer, &size_arg, stdin) > 0) {
         // initialize variables
         curr_idx = 0;
 
@@ -85,9 +85,8 @@ int main(int argc, char* argv[]) {
         free(readbuffer);
         readbuffer = NULL;
     }
-    free(buf);
     free(obuf);
-    free(curr_str);
+    free(buf);
 
 	/* Format string for output to be printed when -c option is given */
     if(c_exist == 0)
