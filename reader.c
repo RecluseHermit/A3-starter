@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
                     readbuffer[i] != '\n' && is_del == 1) || i == 0) {
                 // change variables
                 curr_str = &(readbuffer[i]);
-                buf[curr_idx++] = curr_str;
+                buf[curr_idx++] = &(readbuffer[i]);
                 is_del = 0;
             }
 
@@ -74,6 +74,12 @@ int main(int argc, char* argv[]) {
         for(int i = 0; i < obuf_len; i++)
             printf("%s ", buf[obuf[i]]);
         printf("\n");
+
+        // free memories
+        for(int i = 0; i < num_cols; i++) {
+            if(buf[i] != NULL)
+                free(buf[i]);
+        }
 
         // variables change
         num_rows++;
