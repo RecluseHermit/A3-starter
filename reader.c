@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) {
 	/* Local Variables */
-    long str_len = 0; // maximum field
+    unsigned long str_len = 0; // maximum field
     size_t read_line, size_arg; // for getlines
     char *curr_str, *null_str = NULL, **buf, **readbuffer = &null_str; // char pointers
     int *obuf, obuf_len, curr_idx, is_del, num_cols; // int values
@@ -42,14 +42,7 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while(1) {
-        // end of the loop
-        if((read_line = getline(readbuffer, &size_arg, stdin)) == EOF) {
-            free(readbuffer);
-            readbuffer = NULL;
-            break;
-        }
-
+    while((int)(read_line = getline(readbuffer, &size_arg, stdin)) != EOF) {
         // initialize variables
         curr_idx = 0;
 
@@ -85,7 +78,6 @@ int main(int argc, char* argv[]) {
         // variables change
         num_rows++;
         readbuffer = &null_str;
-
     }
 
     // free memories
