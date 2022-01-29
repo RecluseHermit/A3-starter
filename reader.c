@@ -9,7 +9,7 @@
 int main(int argc, char* argv[]) {
 	/* Local Variables */
     unsigned long str_len = 0; // maximum field
-    size_t size_arg = 0; // for getlines
+    size_t read_line, size_arg; // for getlines
     char *curr_str, **buf, *readbuffer = NULL; // char pointers
     int *obuf, obuf_len, curr_idx, is_del, num_cols; // int values
     int num_rows = 0, c_exist = strcmp(argv[1], "-c"); // int pointers
@@ -42,16 +42,15 @@ int main(int argc, char* argv[]) {
     }
 
 	/* process the input as described in the writeup */
-    while(getline(&readbuffer, &size_arg, stdin) > 0) {
+    while((int)(read_line = getline(&readbuffer, &size_arg, stdin)) != EOF) {
         // initialize variables
         curr_idx = 0;
-        curr_str = &(readbuffer[0]);
 
         // loop through readbuffer
         for(int i = 0; readbuffer[i] != '\0'; i++) {
             // first character or first character after delimiter
             if((readbuffer[i] != ' ' && readbuffer[i] != '\t' &&
-                    readbuffer[i] != '\n' && is_del == 1)) {
+                    readbuffer[i] != '\n' && is_del == 1) || i == 0) {
                 // change variables
                 curr_str = &(readbuffer[i]);
                 buf[curr_idx++] = curr_str;
@@ -77,19 +76,17 @@ int main(int argc, char* argv[]) {
         printf("\n");
 
         // variables change
-        readbuffer = NULL;
         num_rows++;
+        readbuffer = NULL;
     }
 
-    // free process
-    free(readbuffer);
-    readbuffer = NULL;
+    // free memories
+    if(readbuffer != NULL) {
+        free(readbuffer);
+        readbuffer = NULL;
+    }
     free(buf);
-    buf = NULL;
     free(obuf);
-    obuf = NULL;
-    free(curr_str);
-    curr_str = NULL;
 
 	/* Format string for output to be printed when -c option is given */
     if(c_exist == 0)
