@@ -8,11 +8,11 @@
 
 int main(int argc, char* argv[]) {
 	/* Local Variables */
-    unsigned long str_len = 0; // maximum field
-    size_t size_arg = 0; // for getlines
-    char *curr_str, **buf, *readbuffer = NULL; // char pointers
-    int *obuf, obuf_len, curr_idx, is_del = 0, num_cols; // int values
-    int num_rows = 0, c_exist = strcmp(argv[1], "-c"); // int pointers
+    size_t size_arg = 0; // size_t variable for getlines
+    unsigned long str_len = 0; // maximum field count variable
+    char  **buf, *curr_str,*readbuffer = NULL; // char pointers
+    int *obuf, obuf_len, curr_idx, num_cols; // int variables
+    int num_rows = 0, is_del = 0, c_exist = strcmp(argv[1], "-c"); // int variables
 
     // no "-c" argument
     if(c_exist != 0) {
@@ -75,14 +75,9 @@ int main(int argc, char* argv[]) {
             printf("%s ", buf[obuf[i]]);
         printf("\n");
 
-        // free memories
-        for(int i = 0; i < num_cols; i++) {
-            if(buf[i] != NULL)
-                free(buf[i]);
-        }
-
-        // variables change
+        // variables change and free memories
         num_rows++;
+        free(readbuffer);
         readbuffer = NULL;
     }
 
