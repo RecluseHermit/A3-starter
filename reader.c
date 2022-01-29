@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
         // print the columns for current record
         for(int i = 0; i < obuf_len-1; i++)
-            printf("%s", buf[obuf[i]]);
+            printf("%s ", buf[obuf[i]]);
         printf("%s\n", buf[obuf[obuf_len-1]]);
 
         // variables change and free memories
